@@ -7,6 +7,9 @@
  ****************************************************************/
 function getBookById(bookId, books) {
   // Your code goes here
+  let b = books.filter(book => bookId === book.id);
+  if (b) return b[0];
+  return undefined;
 }
 
 /**************************************************************
@@ -18,6 +21,11 @@ function getBookById(bookId, books) {
  ****************************************************************/
 function getAuthorByName(authorName, authors) {
   // Your code goes here
+  let a = authors.filter(
+    author => authorName.toLowerCase() === author.name.toLowerCase()
+  );
+  if (a) return a[0];
+  return undefined;
 }
 
 /**************************************************************
@@ -28,6 +36,11 @@ function getAuthorByName(authorName, authors) {
  ****************************************************************/
 function bookCountsByAuthor(authors) {
   // Your code goes here
+  let arr = authors.map(author => ({
+    author: author.name,
+    bookCount: author.books.length
+  }));
+  return arr;
 }
 
 /**************************************************************
@@ -41,6 +54,27 @@ function booksByColor(books) {
   const colors = {};
 
   // Your code goes here
+  let cols = books.map(book => book.color);
+  cols.sort();
+  let col = cols[0];
+  let flag = true;
+  let newcol = [];
+  for (let i = 0; i < cols.length; i++) {
+    if (col !== cols[i]) {
+      flag = true;
+      col = cols[i];
+    }
+    if (col === cols[i] && flag) {
+      newcol.push(col);
+      flag = false;
+    }
+  }
+  for (let i = 0; i < newcol.length; i++) {
+    let newl = books
+      .filter(book => book.color === newcol[i])
+      .map(book => book.title);
+    colors[newcol[i]] = newl;
+  }
 
   return colors;
 }
@@ -55,6 +89,16 @@ function booksByColor(books) {
  ****************************************************************/
 function titlesByAuthorName(authorName, authors, books) {
   // Your code goes here
+  let authorBooks = [];
+
+  for (let i = 0; i < books.length; i++) {
+    for (let j = 0; j < books[i].authors.length; j++) {
+      if (books[i].authors[j].name.toLowerCase() === authorName.toLowerCase()) {
+        authorBooks.push(books[i].title);
+      }
+    }
+  }
+  return authorBooks;
 }
 
 /**************************************************************
@@ -66,6 +110,13 @@ function titlesByAuthorName(authorName, authors, books) {
  ****************************************************************/
 function mostProlificAuthor(authors) {
   // Your code goes here
+  let authorscount = bookCountsByAuthor(authors);
+  let high = authorscount[0];
+
+  for (let i = 0; i < authorscount.length; i++) {
+    if (authorscount[i].bookCount > high.bookCount) high = authorscount[i];
+  }
+  return high.author;
 }
 
 /**************************************************************
@@ -93,6 +144,20 @@ function mostProlificAuthor(authors) {
  ****************************************************************/
 function relatedBooks(bookId, authors, books) {
   // Your code goes here
+  let authorName = books.filter(book => book.id === bookId);
+
+  let booklist = [];
+  for (let i = 0; i < authorName[0].authors.length; i++) {
+    let cbooklist = titlesByAuthorName(
+      authorName[0].authors[i].name,
+      authors,
+      books
+    );
+    for (let j = 0; j < cbooklist.length; j++) {
+      booklist.push(cbooklist[j]);
+    }
+  }
+  return booklist.filter((v, i) => booklist.indexOf(v) == i);
 }
 
 /**************************************************************
@@ -103,6 +168,37 @@ function relatedBooks(bookId, authors, books) {
  ****************************************************************/
 function friendliestAuthor(authors) {
   // Your code goes here
+  // let auth = authors[0];
+  // let allcos = [];
+  // // allcos = bookCountsByAuthor(authors);
+  //
+  // for (let i = 1; i < authors.length; i++) {
+  //   let result = authors.forEach( function compare(books1, books2) {
+  //   const comBooks = [];
+  //   books1.forEach(book =>
+  //     books2.forEach(book2 => {
+  //       if (book === book2) {
+  //         comBooks.push(book);
+  //       }
+  //     })
+  //   );
+  //   return comBooks;
+  // })
+  //   allcos.push();
+  // }
+  // //
+  // // let co = authors.filter(function(author) {
+  // //   author.books.filter(function(books) {
+  // //     books.filter(function(books) {});
+  // //   });
+  // // });
+  //
+  //
+  // co = authors.forEach(function(author) {
+  //    author.books.filter(function(books) {
+  //      books.filter(function(books) {});
+  //    });
+  //  });)
 }
 
 module.exports = {
